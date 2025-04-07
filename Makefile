@@ -4,8 +4,8 @@ MKDIR := mkdir -p
 RM := rm -rf
 
 build:
-	$(MKDIR) /home/inazaria/data/mysql
-	$(MKDIR) /home/inazaria/data/wordpress
+	$(MKDIR) /home/famouskid/inazaria/data/mysql
+	$(MKDIR) /home/famouskid/inazaria/data/wordpress
 	@$(DC)  -f $(DC_FILE) up --build -d
 
 kill:
@@ -18,8 +18,8 @@ clean:
 	@$(DC) -f $(DC_FILE) down -v
 
 fclean: clean
-	$(RM) /home/inazaria/data/mysql
-	$(RM) /home/inazaria/data/wordpress
+	$(RM) /home/famouskid/inazaria/data/mysql
+	$(RM) /home/famouskid/inazaria/data/wordpress
 	docker system prune -a -f
 
 restart: clean build

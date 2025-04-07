@@ -10,7 +10,7 @@ RUN	    apt update -y && \
         rm -rf /etc/nginx/sites-available/default
 
 COPY    ./conf/default.conf /etc/nginx/sites-available/default.conf
-COPY    ./conf/nginx.conf /etc/nginx/nginx.conf
+COPY    ./conf/default.conf /etc/nginx/default.conf
 COPY    ./tools/entrypoint.sh /tmp/entrypoint.sh
 
 RUN     ln -s /etc/nginx/sites-available/default.conf /etc/nginx/sites-enabled/default.conf
