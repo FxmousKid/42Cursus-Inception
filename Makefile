@@ -6,7 +6,12 @@ RM := rm -rf
 build:
 	$(MKDIR) /home/famouskid/inazaria/data/mysql
 	$(MKDIR) /home/famouskid/inazaria/data/wordpress
-	@$(DC)  -f $(DC_FILE) up --build -d
+	@$(DC)  -f $(DC_FILE) up --build 
+
+up:
+	@$(DC) -f $(DC_FILE) up 
+
+all: build up
 
 kill:
 	@$(DC) -f $(DC_FILE) kill
@@ -25,4 +30,4 @@ fclean: clean
 restart: clean build
 
 .PHONY: kill build down clean restart
-.DEFAULT_GOAL := build
+.DEFAULT_GOAL := all
