@@ -5,6 +5,7 @@ RUN apt update -y && \
 	apt-get install -y php \
 	php-mysql \
 	php-cli \
+	curl \
 	php-mbstring \
 	php-fpm \
 	php-gettext \
@@ -16,3 +17,6 @@ RUN apt update -y && \
 COPY ./tools/entrypoint.sh .
 COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d/
 RUN chmod +x ./entrypoint.sh
+
+
+CMD ["./entrypoint.sh"]

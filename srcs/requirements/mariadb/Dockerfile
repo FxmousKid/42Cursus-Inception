@@ -15,7 +15,7 @@ COPY    ./conf/my.cnf /etc/mysql
 RUN     chown -R mysql:mysql /tmp/ && \
         chown -R mysql:mysql /etc/mysql
 
-#EXPOSE  3306
+EXPOSE  3306
 USER    mysql
 
 ENTRYPOINT ["sh", "/tmp/entrypoint.sh"]
