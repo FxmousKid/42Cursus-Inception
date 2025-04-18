@@ -1,62 +1,56 @@
-networks:
-  inception_network:
-    driver: bridge
-  
-volumes:
-  mariadb:
-    driver_opts:
-      type: none
-      device: /home/inazaria/data/mysql
-      o: bind
-
-  wordpress:
-    driver_opts:
-      type: none
-      device: /home/inazaria/data/wordpress
-      o: bind
 
 services:
-  nginx:
-    build: ./requirements/nginx
-    image: nginx:inception
-    container_name: nginx
-    volumes:
-      - wordpress:/var/www/wordpress
-    networks:
-      - inception_network
-    depends_on:
-      - wordpress
-    env_file:
-      - .env
-    restart: on-failure
-      
+        mariadb:
+                build: requirements/mariadb
+                image: mariadb
+                container_name: mariadb
+                env_file: /home/inazaria/.env
+                volumes:
+                        - mariadb:/var/lib/mysql
+                restart: on-failure
+                networks:
+                        - inception
 
-  mariadb:
-    build: ./requirements/mariadb/
-    image: mariadb:inception
-    container_name: mariadb
-    volumes:
-      - mariadb:/var/lib/mysql
-    networks:
-      - inception_network
-    env_file:
-      - .env
-    expose:
-      - "3306"
-    restart: on-failure
+        wordpress:
+                build: requirements/wordpress
+                image: wordpress
+                depends_on:
+                        - mariadb
+                container_name: wordpress
+                env_file: /home/inazaria/.env
+                volumes:
+                        - wordpress:/var/www/wordpress
+                restart: on-failure
+                networks:
+                        - inception
 
-  wordpress:
-    build: ./requirements/wordpress/
-    image: wordpress:inception
-    container_name: wordpress
-    volumes:
-      - wordpress:/var/www/wordpress
-    networks:
-      - inception_network
-    depends_on: 
-      - mariadb
-    env_file:
-      - .env
-    expose:
-      - "9000"
-    restart: on-failure
+        nginx:
+                build: requirements/nginx
+                image: nginx
+                depends_on:
+                        - wordpress
+                container_name: nginx
+                env_file: /home/inazaria/.env
+                volumes:
+                        - wordpress:/var/www/wordpress
+                ports:
+                        - "443:443"
+                restart: on-failure
+                networks:
+                        - inception
+
+networks:
+        inception:
+                driver: bridge
+
+volumes:
+        mariadb:
+                driver_opts:
+                        type: none
+                        device: /home/inazaria/data/mysql
+                        o: bind
+        wordpress:
+                driver_opts:
+                        type: none
+                        device: /home/inazaria/data/html
+                        o: bind
