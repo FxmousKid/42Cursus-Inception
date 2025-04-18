@@ -1,3 +1,5 @@
+#---------- MARIADB ----------
+
 FROM    debian:buster
 
 RUN     apt-get update -yq && \
@@ -8,7 +10,7 @@ RUN     apt-get update -yq && \
         chown -R mysql:mysql /var/run/mysqld && \
         chown -R mysql:mysql /etc/mysql/
 
-COPY    ./tools/entrypoint.sh /tmp/
+COPY    ./tools/run.sh /tmp/
 COPY    ./conf/init.sql /tmp/
 COPY    ./conf/my.cnf /etc/mysql
 
@@ -16,6 +18,7 @@ RUN     chown -R mysql:mysql /tmp/ && \
         chown -R mysql:mysql /etc/mysql
 
 #EXPOSE  3306
+
 USER    mysql
 
-ENTRYPOINT ["sh", "/tmp/entrypoint.sh"]
+ENTRYPOINT ["sh", "/tmp/run.sh"]

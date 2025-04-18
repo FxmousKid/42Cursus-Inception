@@ -1,28 +1,59 @@
-DC := docker compose
-DC_FILE := ./srcs/docker-compose.yml
-MKDIR := mkdir -p
-RM := rm -rf
+
+NAME=inception
+DOCC=docker compose
+
+all: create_vol build up
+
+host:
+	sudo sed -i 's|localhost|inazaria.42.fr|g' /etc/hosts
+
 
 build:
-	$(MKDIR) /home/inazaria/data/mysql
-	$(MKDIR) /home/inazaria/data/wordpress
-	@$(DC)  -f $(DC_FILE) up --build -d
+	$(DOCC) -f ./srcs/docker-compose.yml build
 
-kill:
-	@$(DC) -f $(DC_FILE) kill
+rm_vol:
+	sudo chown -R $(USER) /home/inazaria/data
+	sudo chmod -R 777 /home/inazaria/data
+	rm -rf /home/inazaria/data
+
+create_vol:
+	mkdir -p /home/inazaria/data/mysql
+	mkdir -p /home/inazaria/data/html
+	sudo chown -R $(USER) /home/inazaria/data
+	sudo chmod -R 777 /home/inazaria/data
+
+up:
+	$(DOCC) -f ./srcs/docker-compose.yml up -d
+
+start:
+	$(DOCC) -f ./srcs/docker-compose.yml start
 
 down:
-	@$(DC) -f $(DC_FILE) down
+	$(DOCC) -f ./srcs/docker-compose.yml down
 
-clean:
-	@$(DC) -f $(DC_FILE) down -v
+remove:
+	sudo chown -R $(USER) /home/inazaria/data
+	sudo chmod -R 777 /home/inazaria/data
+	rm -rf /home/inazaria/data
+	docker volume prune -f
+	docker volume rm srcs_wordpress
+	docker volume rm srcs_mariadb
+	docker container prune -f
 
-fclean: clean
-	$(RM) /home/inazaria/data/mysql
-	$(RM) /home/inazaria/data/wordpress
-	docker system prune -a -f
+re: remove delete build up
 
-restart: clean build
+list:
+	docker ps -a
+	docker images -a
 
-.PHONY: kill build down clean restart
-.DEFAULT_GOAL := build
+delete:
+	cd srcs && docker-compose stop nginx
+	cd srcs && docker-compose stop wordpress
+	cd srcs && docker-compose stop mariadb
+	docker system prune -a
+
+logs:
+	cd srcs && docker-compose logs mariadb wordpress nginx
+
+
+.PHONY: hosts all install build up start down remove re list images delete
